@@ -1,0 +1,27 @@
+﻿生成启动时间为 2015/12/1 13:30:53。
+     1>项目“E:\Users\VS_project\CrowdSimulation_GPU\CrowdSimulation_GPU\CrowdSimulation_GPU.vcxproj”在节点 2 上(build 个目标)。
+     1>InitializeBuildStatus:
+         正在对“Debug\CrowdSimulation_GPU.unsuccessfulbuild”执行 Touch 任务。
+       AddCudaCompileDeps:
+         d:\Software\VS2010\VC\bin\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /D_MBCS /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I. /FIcuda_runtime.h /c E:\Users\VS_project\CrowdSimulation_GPU\CrowdSimulation_GPU\main.cpp 
+       AddCudaCompileDeps:
+         d:\Software\VS2010\VC\bin\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /D_MBCS /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I. /FIcuda_runtime.h /c E:\Users\VS_project\CrowdSimulation_GPU\CrowdSimulation_GPU\MapController.cpp 
+       CudaBuild:
+         Compiling CUDA source file main.cpp...
+         cmd.exe /C "C:\Users\sjtu\AppData\Local\Temp\tmpa19f291554e94a218197a1562172a8dd.cmd"
+         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_10,code=\"sm_10,compute_10\" --use-local-env --cl-version 2010 -ccbin "d:\Software\VS2010\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\main.cpp.obj" "E:\Users\VS_project\CrowdSimulation_GPU\CrowdSimulation_GPU\main.cpp"
+         
+         E:\Users\VS_project\CrowdSimulation_GPU\CrowdSimulation_GPU>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_10,code=\"sm_10,compute_10\" --use-local-env --cl-version 2010 -ccbin "d:\Software\VS2010\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\main.cpp.obj" "E:\Users\VS_project\CrowdSimulation_GPU\CrowdSimulation_GPU\main.cpp" 
+         main.cpp
+     1>E:/Users/VS_project/CrowdSimulation_GPU/CrowdSimulation_GPU/main.cpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\Software\VS2010\VC\include\stdlib.h(353): error C2381: “exit”: 重定义；__declspec(noreturn) 不同
+                 d:\Software\VS2010\VC\include\gl/glut.h(146) : 参见“exit”的声明
+     1>e:\users\vs_project\crowdsimulation_gpu\crowdsimulation_gpu\Agent.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>e:\users\vs_project\crowdsimulation_gpu\crowdsimulation_gpu\CostNode.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>e:\users\vs_project\crowdsimulation_gpu\crowdsimulation_gpu\CostNode.h(26): warning C4800: “const float32”: 将值强制为布尔值“true”或“false”(性能警告)
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\BuildCustomizations\CUDA 5.0.targets(592,9): error MSB3721: 命令“"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_10,code=\"sm_10,compute_10\" --use-local-env --cl-version 2010 -ccbin "d:\Software\VS2010\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\main.cpp.obj" "E:\Users\VS_project\CrowdSimulation_GPU\CrowdSimulation_GPU\main.cpp"”已退出，返回代码为 2。
+     1>已完成生成项目“E:\Users\VS_project\CrowdSimulation_GPU\CrowdSimulation_GPU\CrowdSimulation_GPU.vcxproj”(build 个目标)的操作 - 失败。
+
+生成失败。
+
+已用时间 00:00:01.74
