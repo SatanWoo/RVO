@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Agent.cpp" />
+    <ClCompile Include="GlobalConfig.cpp" />
+    <ClCompile Include="KDObstacle.cpp" />
+    <ClCompile Include="KDTree.cpp" />
+    <ClCompile Include="Vector.cpp" />
+    <ClCompile Include="C:\Users\sjtu\Desktop\src\Agent.cpp">
+      <Filter>Sample</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sjtu\Desktop\src\KdTree.cpp">
+      <Filter>Sample</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sjtu\Desktop\src\Obstacle.cpp">
+      <Filter>Sample</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sjtu\Desktop\src\RVOSimulator.cpp">
+      <Filter>Sample</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Agent.h" />
+    <ClInclude Include="b2Vec2DHelper.h" />
+    <ClInclude Include="CostNode.h" />
+    <ClInclude Include="GlobalConfig.h" />
+    <ClInclude Include="KDNode.h" />
+    <ClInclude Include="KDObstacle.h" />
+    <ClInclude Include="KDTree.h" />
+    <ClInclude Include="KDTuple.h" />
+    <ClInclude Include="MapController.h" />
+    <ClInclude Include="MathLib.h" />
+    <ClInclude Include="Vector.h" />
+    <ClInclude Include="VirtualNode.h" />
+    <ClInclude Include="RVO.h">
+      <Filter>RVO</Filter>
+    </ClInclude>
+    <ClInclude Include="RVOAgent.h">
+      <Filter>RVO</Filter>
+    </ClInclude>
+    <ClInclude Include="RVOSimulator.h">
+      <Filter>RVO</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\Agent.h">
+      <Filter>Sample</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\Definitions.h">
+      <Filter>Sample</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\KdTree.h">
+      <Filter>Sample</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\Obstacle.h">
+      <Filter>Sample</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\RVO.h">
+      <Filter>Sample</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\RVOSimulator.h">
+      <Filter>Sample</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\Vector2.h">
+      <Filter>Sample</Filter>
+    </ClInclude>
+    <ClInclude Include="RVOShape.h">
+      <Filter>RVO</Filter>
+    </ClInclude>
+    <ClInclude Include="RVOObstacles.h">
+      <Filter>RVO</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="main.cu" />
+    <CudaCompile Include="MapController.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="RVO">
+      <UniqueIdentifier>{73bedc6c-460b-4fe5-ae79-d1a20abc1ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sample">
+      <UniqueIdentifier>{fddf2422-69b4-4c26-b487-8d998fef64aa}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\sjtu\Desktop\src\CMakeLists.txt">
+      <Filter>Sample</Filter>
+    </None>
+  </ItemGroup>
+</Project>

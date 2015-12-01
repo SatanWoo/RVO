@@ -83,7 +83,6 @@ MapController::MapController(int width, int height, int count, double timeStep)
 		b2PolygonShape *shape = (b2PolygonShape *)fixDef->shape;
 		shape->SetAsBox(0.5, 0.5);
 
-
 		bodyDef->type = b2_staticBody;
 		bodyDef->position.Set(pos.x, pos.y);
 

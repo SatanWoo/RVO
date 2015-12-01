@@ -88,6 +88,10 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Agent.cpp" />
+    <ClCompile Include="C:\Users\sjtu\Desktop\src\Agent.cpp" />
+    <ClCompile Include="C:\Users\sjtu\Desktop\src\KdTree.cpp" />
+    <ClCompile Include="C:\Users\sjtu\Desktop\src\Obstacle.cpp" />
+    <ClCompile Include="C:\Users\sjtu\Desktop\src\RVOSimulator.cpp" />
     <ClCompile Include="GlobalConfig.cpp" />
     <ClCompile Include="KDObstacle.cpp" />
     <ClCompile Include="KDTree.cpp" />
@@ -99,6 +103,13 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="b2Vec2DHelper.h" />
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\Agent.h" />
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\Definitions.h" />
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\KdTree.h" />
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\Obstacle.h" />
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\RVO.h" />
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\RVOSimulator.h" />
+    <ClInclude Include="C:\Users\sjtu\Desktop\src\Vector2.h" />
     <ClInclude Include="CostNode.h" />
     <ClInclude Include="GlobalConfig.h" />
     <ClInclude Include="KDNode.h" />
@@ -107,8 +118,16 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="KDTuple.h" />
     <ClInclude Include="MapController.h" />
     <ClInclude Include="MathLib.h" />
+    <ClInclude Include="RVO.h" />
+    <ClInclude Include="RVOAgent.h" />
+    <ClInclude Include="RVOObstacles.h" />
+    <ClInclude Include="RVOShape.h" />
+    <ClInclude Include="RVOSimulator.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VirtualNode.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\sjtu\Desktop\src\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
