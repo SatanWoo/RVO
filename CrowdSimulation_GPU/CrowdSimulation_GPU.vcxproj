@@ -98,6 +98,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <CudaCompile Include="MapController.cpp">
       <FileType>CppCode</FileType>
     </CudaCompile>
+    <ClCompile Include="RVOSimulator.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +124,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="RVOObstacles.h" />
     <ClInclude Include="RVOShape.h" />
     <ClInclude Include="RVOSimulator.h" />
+    <ClInclude Include="RVOTree.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VirtualNode.h" />
   </ItemGroup>

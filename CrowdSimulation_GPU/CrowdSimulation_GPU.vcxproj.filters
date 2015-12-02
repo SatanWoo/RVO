@@ -18,6 +18,9 @@
     <ClCompile Include="C:\Users\sjtu\Desktop\src\RVOSimulator.cpp">
       <Filter>Sample</Filter>
     </ClCompile>
+    <ClCompile Include="RVOSimulator.cpp">
+      <Filter>RVO</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -66,6 +69,9 @@
       <Filter>RVO</Filter>
     </ClInclude>
     <ClInclude Include="RVOObstacles.h">
+      <Filter>RVO</Filter>
+    </ClInclude>
+    <ClInclude Include="RVOTree.h">
       <Filter>RVO</Filter>
     </ClInclude>
   </ItemGroup>

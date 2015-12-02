@@ -16,16 +16,20 @@ namespace RVO {
 		typedef std::pair<float, RVOObstacles *> ObstacleHash;
 		typedef std::vector<ObstacleHash> ObstacleNeighbours;
 
-		typedef std::vector<RVOLine> Line;
+		typedef std::vector<RVOLine> Lines;
+
+		friend class RVOSimualtor;
 
 	public :
 		RVOAgent(RVO::RVOSimualtor *simualtor);
+		RVOAgent(const RVOAgent *agent);
+		RVOAgent(const RVOAgent& agent);
 
-		bool linearProgram1(const Line& lines, size_t
+		bool linearProgram1(const Lines& lines, size_t
 			 lineID, float radius, const b2Vec2& optVelocity, bool directionOpt, b2Vec2& result);
-		bool linearProgram2(const Line& lines, 
+		size_t linearProgram2(const Lines& lines, 
 			float radius, const b2Vec2& optVelocity, bool directionOpt, b2Vec2& result);
-		bool linearProgram3();
+		void linearProgram3(const Lines &lines, size_t numObstLines, size_t beginLine, float radius, b2Vec2 &result);
 
 		int maxNeighbours;
 		float maxSpeed;
@@ -37,13 +41,18 @@ namespace RVO {
 		float radius;
 		float timeHorizon;
 		float timeHorizonObst;
-		b2Vec2 velocity;
+		b2Vec2 newVelocity;
 
 	private:
 		void computeNeighbours();
 		void computeNewVelocity();
 		void insertNewNeighbour(const RVOAgent* agent, float &rangeSq);
+		void insertObstacleNeighbour(const RVOObstacles *ob ,float rangeSq);
 		void update();
+
+		AgentNeighbours agentNeighbours;
+		ObstacleNeighbours obstacleNeighbours;
+		Lines lines;
 
 	public:
 		RVOSimualtor *simualtor;
