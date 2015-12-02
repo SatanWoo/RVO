@@ -51,141 +51,313 @@ namespace RVO
 	{
 		lines.clear();
 
-		const float invTimeHorizonObst = 1.0f/timeHorizonObst;
-		for (size_t i = 0; i < obstacleNeighbours.size(); ++i)
-		{
-			const RVOObstacles *ob1 = obstacleNeighbours[i].second;
-			const RVOObstacles *ob2 = ob1->next;
+		const float invTimeHorizonObst = 1.0f / timeHorizonObst;
 
-			const b2Vec2 relativePosition1 = ob1->point - position;
-			const b2Vec2 relativePosition2 = ob2->point - position;
+		/* Create obstacle ORCA lines. */
+		for (size_t i = 0; i < obstacleNeighbours.size(); ++i) {
 
-			bool alreadyCoverd = false;
-			for (size_t j = 0; j < lines.size(); ++j)
-			{
-				if (det(invTimeHorizonObst * relativePosition1 - lines[j].point, lines[j].direction) - invTimeHorizonObst * radius >= RVO_EPSILON &&
-					det(invTimeHorizonObst * relativePosition2 - lines[j].point, lines[j].direction) - invTimeHorizonObst *radius >= RVO_EPSILON)
-				{
-					alreadyCoverd = true;
+			const RVOObstacles *obstacle1 = obstacleNeighbours[i].second;
+			const RVOObstacles *obstacle2 = obstacle1->next;
+
+			const b2Vec2 relativePosition1 = obstacle1->point - position;
+			const b2Vec2 relativePosition2 = obstacle2->point - position;
+
+			/*
+			 * Check if velocity obstacle of obstacle is already taken care of by
+			 * previously constructed obstacle ORCA lines.
+			 */
+			bool alreadyCovered = false;
+
+			for (size_t j = 0; j < lines.size(); ++j) {
+				if (det(invTimeHorizonObst * relativePosition1 - lines[j].point, lines[j].direction) - invTimeHorizonObst * radius >= -RVO_EPSILON &&
+					det(invTimeHorizonObst * relativePosition2 - lines[j].point, lines[j].direction) - invTimeHorizonObst * radius >=  -RVO_EPSILON) {
+					alreadyCovered = true;
 					break;
 				}
 			}
 
-			if (alreadyCoverd) continue;
+			if (alreadyCovered) {
+				continue;
+			}
+
+			/* Not yet covered. Check for collisions. */
 
 			const float distSq1 = relativePosition1.LengthSquared();
 			const float distSq2 = relativePosition2.LengthSquared();
+
 			const float radiusSq = radius * radius;
-			
-			const b2Vec2 obstacleVec = ob2->point - ob1->point;
-			const float s = (-relativePosition1 * obstacleVec) / obstacleVec.LengthSquared();
-			const float distSqLine = (-relativePosition1 - s * obstacleVec).LengthSquared();
+
+			const b2Vec2 obstacleVector = obstacle2->point - obstacle1->point;
+			const float s = (-relativePosition1 * obstacleVector) / obstacleVector.LengthSquared();
+			const float distSqLine = (-relativePosition1 - s * obstacleVector).LengthSquared();
 
 			RVOLine line;
-			if (s < 0 && distSq1 < radiusSq) 
-			{
-				if (ob1->isConvex) 
-				{
+
+			if (s < 0.0f && distSq1 <= radiusSq) {
+				/* Collision with left vertex. Ignore if non-convex. */
+				if (obstacle1->isConvex) {
 					line.point = b2Vec2_zero;
-					b2Vec2 dir = b2Vec2(-relativePosition1.y, relativePosition1.x);
-					dir.Normalize();
-					line.direction = dir;
+					b2Vec2 vec = b2Vec2(-relativePosition1.y, relativePosition1.x);
+					vec.Normalize();
+
+					line.direction = vec;
 					lines.push_back(line);
 				}
 
 				continue;
 			}
-			else if (s > 1.0 && distSq2 <= radiusSq) 
-			{
-				if (ob2->isConvex && det(relativePosition2, ob2->unitDir) >= 0)
-				{
+			else if (s > 1.0f && distSq2 <= radiusSq) {
+				/* Collision with right vertex. Ignore if non-convex
+				 * or if it will be taken care of by neighoring obstace */
+				if (obstacle2->isConvex && det(relativePosition2, obstacle2->unitDir) >= 0.0f) {
 					line.point = b2Vec2_zero;
-					b2Vec2 dir = b2Vec2(-relativePosition2.y, relativePosition2.x);
-					dir.Normalize();
-					line.direction = dir;
+					b2Vec2 vec = b2Vec2(-relativePosition2.y, relativePosition2.x);
+					vec.Normalize();
+					line.direction = vec;
 					lines.push_back(line);
 				}
+
 				continue;
 			}
-			else if (s >= 0 && s < 1.0 && distSqLine <= radiusSq)
-			{
+			else if (s >= 0.0f && s < 1.0f && distSqLine <= radiusSq) {
+				/* Collision with obstacle segment. */
 				line.point = b2Vec2_zero;
-				line.direction = -ob1->unitDir;
+				line.direction = -obstacle1->unitDir;
 				lines.push_back(line);
 				continue;
 			}
 
+			/*
+			 * No collision.
+			 * Compute legs. When obliquely viewed, both legs can come from a single
+			 * vertex. Legs extend cut-off line when nonconvex vertex.
+			 */
+
 			b2Vec2 leftLegDirection, rightLegDirection;
-			if (s < 0 && distSqLine <= radiusSq)
-			{
-				if (!ob1->isConvex) continue;
 
-				ob2 = ob1;
+			if (s < 0.0f && distSqLine <= radiusSq) {
+				/*
+				 * Obstacle viewed obliquely so that left vertex
+				 * defines velocity obstacle.
+				 */
+				if (!obstacle1->isConvex) {
+					/* Ignore obstacle. */
+					continue;
+				}
+
+				obstacle2 = obstacle1;
+
 				const float leg1 = std::sqrt(distSq1 - radiusSq);
-				leftLegDirection = b2Vec2(relativePosition1.x * leg1 - relativePosition1.y * radius, relativePosition1.x * radius + relativePosition1.y * leg1);
-				leftLegDirection *= (1 / distSq2);
-				rightLegDirection = b2Vec2(relativePosition1.x * leg1 + relativePosition1.y * radius, -relativePosition1.x * radius + relativePosition1.y * leg1);
-				rightLegDirection *= (1 / distSq2);
+				leftLegDirection = b2Vec2(relativePosition1.x * leg1 - relativePosition1.y * radius, relativePosition1.x * radius + relativePosition1.y * leg1) * (1 / distSq1);
+				rightLegDirection = b2Vec2(relativePosition1.x * leg1 + relativePosition1.y * radius, -relativePosition1.x * radius + relativePosition1.y * leg1) * (1 / distSq1);
 			}
-			else if (s > 1 && distSqLine <= radiusSq)
-			{
-				if (!ob2->isConvex) continue;
-				ob1 = ob2;
+			else if (s > 1.0f && distSqLine <= radiusSq) {
+				/*
+				 * Obstacle viewed obliquely so that
+				 * right vertex defines velocity obstacle.
+				 */
+				if (!obstacle2->isConvex) {
+					/* Ignore obstacle. */
+					continue;
+				}
+
+				obstacle1 = obstacle2;
+
 				const float leg2 = std::sqrt(distSq2 - radiusSq);
-				leftLegDirection = b2Vec2(relativePosition2.x * leg2 - relativePosition2.y * radius, relativePosition2.x * radius + relativePosition2.y * leg2);
-				leftLegDirection *= (1 / distSq2);
-				rightLegDirection = b2Vec2(relativePosition2.x * leg2 + relativePosition2.y * radius, -relativePosition2.x * radius + relativePosition2.y * leg2);
-				rightLegDirection *= (1 / distSq2);
+				leftLegDirection = b2Vec2(relativePosition2.x * leg2 - relativePosition2.y * radius, relativePosition2.x * radius + relativePosition2.y * leg2) * (1 / distSq2);
+				rightLegDirection = b2Vec2(relativePosition2.x * leg2 + relativePosition2.y * radius, -relativePosition2.x * radius + relativePosition2.y * leg2) * (1 / distSq2);
 			}
-			else
-			{
-				if (ob1->isConvex)
-				{
+			else {
+				/* Usual situation. */
+				if (obstacle1->isConvex) {
 					const float leg1 = std::sqrt(distSq1 - radiusSq);
-					leftLegDirection = b2Vec2(relativePosition1.x * leg1 - relativePosition2.y * radius, relativePosition1.x * radius + relativePosition1.y * leg1);
-					leftLegDirection *= (1/distSq1);
+					leftLegDirection = b2Vec2(relativePosition1.x * leg1 - relativePosition1.y * radius, relativePosition1.x * radius + relativePosition1.y * leg1) * (1 / distSq1);
 				}
-				else
-				{
-					leftLegDirection = -ob1->unitDir;
+				else {
+					/* Left vertex non-convex; left leg extends cut-off line. */
+					leftLegDirection = -obstacle1->unitDir;
 				}
 
-				if (ob2->isConvex)
-				{
+				if (obstacle2->isConvex) {
 					const float leg2 = std::sqrt(distSq2 - radiusSq);
-					rightLegDirection = b2Vec2(relativePosition2.x * leg2 + relativePosition2.y * radius, -relativePosition2.x * radius + relativePosition2.y * leg2);
-					rightLegDirection *= (1 / distSq2);
+					rightLegDirection = b2Vec2(relativePosition2.x * leg2 + relativePosition2.y * radius, -relativePosition2.x * radius + relativePosition2.y * leg2) * (1 / distSq2);
 				}
-				else
-				{
-					rightLegDirection = -ob2->unitDir;
+				else {
+					/* Right vertex non-convex; right leg extends cut-off line. */
+					rightLegDirection = obstacle1->unitDir;
 				}
 			}
 
-			const RVOObstacles *const leftNeighbor = ob1->prev;
-			bool isLeftLegForeign = false, isRightLegForeign = false;
+			/*
+			 * Legs can never point into neighboring edge when convex vertex,
+			 * take cutoff-line of neighboring edge instead. If velocity projected on
+			 * "foreign" leg, no constraint is added.
+			 */
 
-			if (ob1->isConvex && det(leftLegDirection, -leftNeighbor->unitDir) >= 0)
-			{
+			const RVOObstacles *const leftNeighbor = obstacle1->prev;
+
+			bool isLeftLegForeign = false;
+			bool isRightLegForeign = false;
+
+			if (obstacle1->isConvex && det(leftLegDirection, -leftNeighbor->unitDir) >= 0.0f) {
+				/* Left leg points into obstacle. */
 				leftLegDirection = -leftNeighbor->unitDir;
 				isLeftLegForeign = true;
 			}
-			
-			if (ob2->isConvex && det(rightLegDirection, ob2->unitDir) <= 0)
-			{
-				rightLegDirection = ob2->unitDir;
+
+			if (obstacle2->isConvex && det(rightLegDirection, obstacle2->unitDir) <= 0.0f) {
+				/* Right leg points into obstacle. */
+				rightLegDirection = obstacle2->unitDir;
 				isRightLegForeign = true;
 			}
 
-			const b2Vec2 leftCutOff = invTimeHorizonObst * (ob1->point - position);
-			const b2Vec2 rightCutOff = invTimeHorizonObst * (ob2->point - position);
-			const b2Vec2 cutOffVec = rightCutOff - leftCutOff;
+			/* Compute cut-off centers. */
+			const b2Vec2 leftCutoff = invTimeHorizonObst * (obstacle1->point - position);
+			const b2Vec2 rightCutoff = invTimeHorizonObst * (obstacle2->point - position);
+			const b2Vec2 cutoffVec = rightCutoff - leftCutoff;
 
-			const float t = (ob1 == ob2 ? 0.5f : ((velocity - leftCutOff) * cutOffVec) / cutOffVec.LengthSquared());
-			const float tLeft = (velocity - leftCutOff) * leftLegDirection;
-			const float tRight = (velocity - rightCutOff) * rightLegDirection;
+			/* Project current velocity on velocity obstacle. */
 
-			//
+			/* Check if current velocity is projected on cutoff circles. */
+			const float t = (obstacle1 == obstacle2 ? 0.5f : ((velocity - leftCutoff) * cutoffVec) / cutoffVec.LengthSquared());
+			const float tLeft = ((velocity - leftCutoff) * leftLegDirection);
+			const float tRight = ((velocity - rightCutoff) * rightLegDirection);
+
+			if ((t < 0.0f && tLeft < 0.0f) || (obstacle1 == obstacle2 && tLeft < 0.0f && tRight < 0.0f)) {
+				/* Project on left cut-off circle. */
+				b2Vec2 vec = velocity - leftCutoff;
+				vec.Normalize();
+				const b2Vec2 unitW = vec;
+
+				line.direction = b2Vec2(unitW.y, -unitW.x);
+				line.point = leftCutoff + radius * invTimeHorizonObst * unitW;
+				lines.push_back(line);
+				continue;
+			}
+			else if (t > 1.0f && tRight < 0.0f) {
+				/* Project on right cut-off circle. */
+				b2Vec2 vec = velocity - rightCutoff;
+				vec.Normalize();
+				const b2Vec2 unitW = vec;
+
+				line.direction = b2Vec2(unitW.y, -unitW.x);
+				line.point = rightCutoff + radius * invTimeHorizonObst * unitW;
+				lines.push_back(line);
+				continue;
+			}
+
+			/*
+			 * Project on left leg, right leg, or cut-off line, whichever is closest
+			 * to velocity.
+			 */
+			const float distSqCutoff = ((t < 0.0f || t > 1.0f || obstacle1 == obstacle2) ? std::numeric_limits<float>::infinity() : (velocity - (leftCutoff + t * cutoffVec)).LengthSquared());
+			const float distSqLeft = ((tLeft < 0.0f) ? std::numeric_limits<float>::infinity() : (velocity - (leftCutoff + tLeft * leftLegDirection)).LengthSquared());
+			const float distSqRight = ((tRight < 0.0f) ? std::numeric_limits<float>::infinity() : (velocity - (rightCutoff + tRight * rightLegDirection)).LengthSquared());
+
+			if (distSqCutoff <= distSqLeft && distSqCutoff <= distSqRight) {
+				/* Project on cut-off line. */
+				line.direction = -obstacle1->unitDir;
+				line.point = leftCutoff + radius * invTimeHorizonObst * b2Vec2(-line.direction.y, line.direction.x);
+				lines.push_back(line);
+				continue;
+			}
+			else if (distSqLeft <= distSqRight) {
+				/* Project on left leg. */
+				if (isLeftLegForeign) {
+					continue;
+				}
+
+				line.direction = leftLegDirection;
+				line.point = leftCutoff + radius * invTimeHorizonObst * b2Vec2(-line.direction.y, line.direction.x);
+				lines.push_back(line);
+				continue;
+			}
+			else {
+				/* Project on right leg. */
+				if (isRightLegForeign) {
+					continue;
+				}
+
+				line.direction = -rightLegDirection;
+				line.point = rightCutoff + radius * invTimeHorizonObst * b2Vec2(-line.direction.y, line.direction.x);
+				lines.push_back(line);
+				continue;
+			}
+		}
+
+		const size_t numObstLines = lines.size();
+
+		const float invTimeHorizon = 1.0f / timeHorizon;
+
+		/* Create agent ORCA lines. */
+		for (size_t i = 0; i < agentNeighbours.size(); ++i) {
+			const RVOAgent *const other = agentNeighbours[i].second;
+
+			const b2Vec2 relativePosition = other->position - position;
+			const b2Vec2 relativeVelocity = velocity - other->velocity;
+			const float distSq = relativePosition.LengthSquared();
+			const float combinedRadius = radius + other->radius;
+			const float combinedRadiusSq = combinedRadius * combinedRadius;
+
+			RVOLine line;
+			b2Vec2 u;
+
+			if (distSq > combinedRadiusSq) {
+				/* No collision. */
+				const b2Vec2 w = relativeVelocity - invTimeHorizon * relativePosition;
+				/* Vector from cutoff center to relative velocity. */
+				const float wLengthSq = w.LengthSquared();
+
+				const float dotProduct1 = w.dot(relativePosition);
+
+				if (dotProduct1 < 0.0f && dotProduct1 * dotProduct1 > combinedRadiusSq * wLengthSq) {
+					/* Project on cut-off circle. */
+					const float wLength = std::sqrt(wLengthSq);
+					const b2Vec2 unitW = w * (1 /wLength);
+
+					line.direction = b2Vec2(unitW.y, -unitW.x);
+					u = (combinedRadius * invTimeHorizon - wLength) * unitW;
+				}
+				else {
+					/* Project on legs. */
+					const float leg = std::sqrt(distSq - combinedRadiusSq);
+
+					if (det(relativePosition, w) > 0.0f) {
+						/* Project on left leg. */
+						line.direction = b2Vec2(relativePosition.x * leg - relativePosition.y * combinedRadius, relativePosition.x * combinedRadius + relativePosition.y * leg) * (1/distSq);
+					}
+					else {
+						/* Project on right leg. */
+						line.direction = -b2Vec2(relativePosition.x * leg + relativePosition.y * combinedRadius, -relativePosition.x * combinedRadius + relativePosition.y * leg) * (1/distSq);
+					}
+
+					const float dotProduct2 = relativeVelocity * line.direction;
+
+					u = dotProduct2 * line.direction - relativeVelocity;
+				}
+			}
+			else {
+				/* Collision. Project on cut-off circle of time timeStep. */
+				const float invTimeStep = 1.0f / simualtor->timeStep;
+
+				/* Vector from cutoff center to relative velocity. */
+				const b2Vec2 w = relativeVelocity - invTimeStep * relativePosition;
+
+				const float wLength = w.Length();
+				const b2Vec2 unitW = w / wLength;
+
+				line.direction = b2Vec2(unitW.y, -unitW.x);
+				u = (combinedRadius * invTimeStep - wLength) * unitW;
+			}
+
+			line.point = velocity + 0.5f * u;
+			lines.push_back(line);
+		}
+
+		size_t lineFail = linearProgram2(lines, maxSpeed, prefVelocity, false, newVelocity);
+
+		if (lineFail < lines.size()) {
+			linearProgram3(lines, numObstLines, lineFail, maxSpeed, newVelocity);
 		}
 	}
 
